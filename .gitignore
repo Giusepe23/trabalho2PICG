@@ -11,6 +11,10 @@ CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
 processador
+OpenCVTest
+*.dll
+*.cmake
+
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
