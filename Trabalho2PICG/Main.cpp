@@ -1,33 +1,50 @@
 #include<opencv2/highgui/highgui.hpp>
+#include <iostream>
+#include <string>
 
 using namespace cv;
-int limiar = 100;
+using namespace std;
 
+void negativo(char* entrada, char* saida);
+void limiarizacao(char* entrada, char* saida, int limiar);
 
-int main()
-{
+int main(int argc, char** argv) {
 
-	IplImage* img = cvLoadImage("lena.png");
+	if (argc < 3) {
+		cout << "A entrada precisar ter o segunte formato: ./processador <metodo> imagem_entrada imagem_saida\n";
+		return -1;
+	}
+	string metodo = argv[1];
+
+	if (metodo == "negativo") {
+		negativo(argv[2], argv[3]);
+	} else if (metodo == "limiarizacao") {
+		int limiar = stoi(argv[4]);
+		limiarizacao(argv[2], argv[3], limiar);
+	}
+	return 1;
+}
+
+void negativo(char* entrada, char* saida) {
+
+	IplImage* img = cvLoadImage(entrada);
+
+	cout << "Executando o negativo ... \n";
+	if (!img) {
+		cout << "Imagem de entrada não localizada\n";
+		return;
+	}
 
 	//Imagem pra guardar o resultado da operação
-	IplImage* out = cvCreateImage(
-		cvGetSize(img), IPL_DEPTH_8U, 3);
+	IplImage* out = cvCreateImage(cvGetSize(img), IPL_DEPTH_8U, 3);
 
-
-	//cria duas janelas
-	//CV_WINDOW_AUTOSIZE: janela se expande para mostrar imagem em tamanho real
-	//0: cria janela com tamanho fixo  
-	cvNamedWindow("Imagem Original", CV_WINDOW_AUTOSIZE);
-	cvNamedWindow("Imagem de Saida", CV_WINDOW_AUTOSIZE);
 
 	/* NEGATIVO */
-	for (int y = 0; y<img->height; y++) {
-		uchar* ptr_img = (uchar*)(
-			img->imageData + y * img->widthStep);
-		uchar* ptr_out = (uchar*)(
-			out->imageData + y * out->widthStep);
+	for (int y = 0; y < img->height; y++) {
+		uchar* ptr_img = (uchar*)(img->imageData + y * img->widthStep);
+		uchar* ptr_out = (uchar*)(out->imageData + y * out->widthStep);
 
-		for (int x = 0; x<img->width; x++) {
+		for (int x = 0; x < img->width; x++) {
 			uchar r = ptr_img[3 * x + 2];
 			uchar g = ptr_img[3 * x + 1];
 			uchar b = ptr_img[3 * x];
@@ -36,9 +53,28 @@ int main()
 			ptr_out[3 * x + 2] = 255 - 1 - r;
 		}
 	}
-	/**/
+	
+	cvSaveImage(saida, out);
+}
 
-	/* LIMIARIZAÇÃO
+void limiarizacao(char* entrada, char* saida, int limiar) {
+	IplImage* img = cvLoadImage(entrada);
+
+	cout << "Executando o limiar ... \n";
+	if (!img) {
+		cout << "Imagem de entrada não localizada\n";
+		return;
+	}
+
+	if (limiar > 255 || limiar < 0) {
+		cout << "Seu limiar esta fora da faixa 0 <= limiar <+ 255 \n";
+		return;
+	}
+
+	//Imagem pra guardar o resultado da operação
+	IplImage* out = cvCreateImage(
+		cvGetSize(img), IPL_DEPTH_8U, 3);
+	
 	for (int y = 0; y<img->height; y++) {
 		uchar* ptr_img = (uchar*)(
 			img->imageData + y * img->widthStep);
@@ -60,30 +96,6 @@ int main()
 				ptr_out[3 * x + 2] = 0;
 			}
 		}
-	}*/
-
-
-
-
-
-
-
-	//exibe a imagem img na janela 
-	cvShowImage("Imagem Original", img);
-
-	//exibe a imagem out na janela 
-	cvShowImage("Imagem de Saida", out);
-
-	//faz com que o programa espere por um evento do teclado
-	cvWaitKey(0);
-
-	//destroi janelas
-	cvDestroyWindow("Imagem Original");
-	cvDestroyWindow("Imagem de Saida");
-
-	//destroi imagem
-	cvReleaseImage(&img);
-	cvReleaseImage(&out);
-	return 1;
+	}
+	cvSaveImage(saida, out);
 }
-
