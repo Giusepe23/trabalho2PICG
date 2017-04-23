@@ -271,6 +271,5 @@ __pycache__/
 *.pyc
 
 # User ignore
-/OpenCVTest/opencv_world320d.dll
-/OpenCVTest/opencv_world320.dll
-/ARM
+/Trabalho2PICG/opencv_world320d.dll
+/Trabalho2PICG/opencv_world320.dll

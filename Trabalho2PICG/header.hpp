@@ -53,7 +53,7 @@ void media(int tamanho, char* entrada, char* saida) {
 		uchar* ptr_img = (uchar*)(img->imageData + y * (img->widthStep - espaco));
 		uchar* ptr_out = (uchar*)(out->imageData + y * (out->widthStep - espaco));
 
-		for (int x = espaco; x < (img->width - espaco); x++) {
+		for (int x = espaco; x < (img->width + tamanho); x++) {
 			int canalR = 0;
 			int canalG = 0;
 			int canalB = 0;
