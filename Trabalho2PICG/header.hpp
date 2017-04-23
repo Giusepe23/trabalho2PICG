@@ -49,14 +49,11 @@ void media(int tamanho, char* entrada, char* saida) {
 	//A mascara ira comecar a analizar de uma certa linha e uma certa coluna em diante.
 	//Isso faz com que a mascara caiba dentro da imagem.
 	int espaco = (tamanho/2);
-	
 	for (int y = espaco; y < (img->height - espaco); y++) {
-
-		uchar* ptr_img = (uchar*)(img->imageData + y * img->widthStep);
-		uchar* ptr_out = (uchar*)(out->imageData + y * out->widthStep);
+		uchar* ptr_img = (uchar*)(img->imageData + y * (img->widthStep - espaco));
+		uchar* ptr_out = (uchar*)(out->imageData + y * (out->widthStep - espaco));
 
 		for (int x = espaco; x < (img->width - espaco); x++) {
-
 			int canalR = 0;
 			int canalG = 0;
 			int canalB = 0;
@@ -65,8 +62,12 @@ void media(int tamanho, char* entrada, char* saida) {
 			 * De cada canal, temos que somar todos os valores e dividir pelo tamanho da mascara ao quadrado (tamanho*tamanho)
 			 * */
 			for (int w = y - espaco; w < y + espaco; w++) {
+				uchar* linhaMascara = (uchar*)(img->imageData + w * (img->widthStep - espaco));
 				for (int k = x - espaco; k < x + espaco; k++) {
 					//Faz a soma de todos os valores nas posicoes da mascara e armazena nos canais 	
+					canalR += linhaMascara[3 * k + 2];
+					canalG += linhaMascara[3 * k + 1];
+					canalB += linhaMascara[3 * k];
 				}
 			}
 
@@ -75,7 +76,7 @@ void media(int tamanho, char* entrada, char* saida) {
 			uchar b = ptr_img[3 * x];*/
 			ptr_out[3 * x] = canalB/(tamanho*tamanho);
 			ptr_out[3 * x + 1] = canalG/(tamanho*tamanho);
-			ptr_out[3 * x + 2] = canalR(tamanho*tamanho);
+			ptr_out[3 * x + 2] = canalR/(tamanho*tamanho);
 		}
 	}
 
